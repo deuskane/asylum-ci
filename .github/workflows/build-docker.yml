@@ -27,7 +27,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./Dockerfile
+          file: ./docker/Dockerfile
           push: true
           # Image stored under your account
           tags: ghcr.io/${{ github.repository_owner }}/asylum-env:latest
