@@ -1,0 +1,72 @@
+name: Shared VHDL CI
+
+on:
+  workflow_call:
+    inputs:
+      target_name:
+        required: false
+        type:     string
+        default:  "all"
+
+#jobs:
+#  lint:
+#    runs-on: ubuntu-latest
+#    container:
+#      image: ghcr.io/${{ github.repository_owner }}/asylum-env:latest
+#    steps:
+#      - uses: actions/checkout@v4
+#      - name: Linter VHDL (VSG)
+#        run: vsg -f src/**/*.vhd
+#
+#  build-and-test:
+#    needs: lint
+#    runs-on: ubuntu-latest
+#    container:
+#      image: ghcr.io/${{ github.repository_owner }}/asylum-env:latest
+#      credentials:
+#        username: ${{ github.actor }}
+#        password: ${{ secrets.GITHUB_TOKEN }}
+#
+#    steps:
+#      - uses: actions/checkout@v4
+#
+#      # Compilation et exécution parallèle via Makefile
+#      - name: Exécution du Makefile (-j auto)
+#        run: |
+#          make -j$(nproc) ${{ inputs.target_name }} 2>&1 | tee simulation.log
+#
+#      # Extraction des métriques UVVM & Couverture
+#      - name: Parsing des résultats
+#        if: always()
+#        run: |
+#          PASSED=$(grep -c "UVVM: Summary: .* 0 NO REASON" simulation.log || grep -c "PASSED" simulation.log || true)
+#          TOTAL=$(grep -c "UVVM: Summary:" simulation.log || grep -cE "PASSED|FAILED" simulation.log || true)
+#          [ "$TOTAL" -eq "0" ] && PASSED=1 && TOTAL=1
+#          echo "TESTS_SCORE=${PASSED}/${TOTAL} passed" >> $GITHUB_ENV
+#
+#          COVERAGE=$(gcovr --root . --json-summary | python3 -c "import sys, json; print(json.load(sys.stdin)['line_percent'])")
+#          echo "COVERAGE_SCORE=${COVERAGE}%" >> $GITHUB_ENV
+#
+#      - name: Badge Coverage
+#        if: always()
+#        uses: Schneegans/dynamic-badges-action@v1.7.0
+#        with:
+#          auth: ${{ secrets.GIST_SECRET }}
+#          gistID: TON_GIST_ID
+#          filename: coverage.json
+#          label: Coverage
+#          message: ${{ env.COVERAGE_SCORE }}
+#          valColorRange: ${{ env.COVERAGE_SCORE }}
+#          minColorRange: 50
+#          maxColorRange: 90
+#
+#      - name: Badge Tests (UVVM)
+#        if: always()
+#        uses: Schneegans/dynamic-badges-action@v1.7.0
+#        with:
+#          auth: ${{ secrets.GIST_SECRET }}
+#          gistID: TON_GIST_ID
+#          filename: tests.json
+#          label: UVVM Tests
+#          message: ${{ env.TESTS_SCORE }}
+#          color: green

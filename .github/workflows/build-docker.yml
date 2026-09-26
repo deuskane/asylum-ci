@@ -1,0 +1,34 @@
+name: Build Central Docker Image
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: # Allows manual rerun of the build
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write # Required to publish to GHCR
+
+    steps:
+      - name: Download code
+        uses: actions/checkout@v4
+
+      - name: Log in to GHCR registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and publish image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          # Image stored under your account
+          tags: ghcr.io/${{ github.repository_owner }}/asylum-env:latest
+	  
