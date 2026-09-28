@@ -8,6 +8,16 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt-get/lists/*
 
 # Python :FuseSoC, Couverture, Linter (VSG)
-RUN pip3 install --no-cache-dir --break-system-packages fusesoc gcovr vsg
+RUN pip3 install --no-cache-dir --break-system-packages\
+ fusesoc \
+ gcovr \
+ vsg \
+ hjson \
+ jsonschema \
+ prettytable
+
+# Update bash environment
+RUN echo RISCV_PREFIX=riscv64-unknown-elf- >> ~/.bashrc
+
 
 WORKDIR /workspace
