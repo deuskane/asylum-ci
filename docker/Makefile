@@ -1,9 +1,9 @@
-IMAGE_NAME     := asylum-ci
-CONTAINER_NAME := asylum-ci-container
-TAG            := latest
-DOCKERFILE     := Dockerfile
-BUILD_CONTEXT  := .
-MOUNT_PATH     := $(HOME)/Work/Repo/asylum-project
+IMAGE_NAME        := asylum-ci
+CONTAINER_NAME    := asylum-ci-container
+TAG               := latest
+DOCKERFILE        := Dockerfile
+BUILD_CONTEXT     := .
+DOCKER_MOUNT_PATH ?= $(PWD)
 
 .PHONY: help build run shell stop clean
 
@@ -36,7 +36,7 @@ shell:
 	docker rm -f $(CONTAINER_NAME) >/dev/null 2>&1 || true
 	docker run --rm -it \
 		--name $(CONTAINER_NAME) \
-		-v "$(MOUNT_PATH):/workspace" \
+		-v "$(DOCKER_MOUNT_PATH):/workspace" \
 		-w /workspace \
 		$(IMAGE_NAME):$(TAG) /bin/bash
 
