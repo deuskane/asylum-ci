@@ -32,6 +32,13 @@ jobs:
         run: |
           make -j"$(nproc)" "${{ inputs.target_name }}" 2>&1 | tee simulation.log
 
+      - name: Upload simulation log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: simulation-log
+          path: simulation.log
+          
 #      # Extraction des métriques UVVM & Couverture
 #      - name: Parsing des résultats
 #        if: always()
