@@ -28,17 +28,28 @@ jobs:
           fusesoc library add ip  .
 
       # Compilation et exécution parallèle via Makefile
-      - name: Simulation
+      - name: Setup
         run: |
-          make -j"$(nproc)" "${{ inputs.target_name }}" 2>&1 | tee simulation.log
+          make "${{ inputs.target_name }}" STEP=setup | tee setup.log
 
-      - name: Upload simulation log
+      - name: Build
+        run: |
+          make -j"$(nproc)" "${{ inputs.target_name }}" STEP=build | tee build.log
+
+      - name: Run
+        run: |
+          make -j"$(nproc)" "${{ inputs.target_name }}" STEP=run | tee run.log
+
+      - name: Upload logs
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: simulation-log
-          path: simulation.log
-          
+          name: ci-logs
+          path: |
+            setup.log
+            build.log
+            run.log
+
 #      # Extraction des métriques UVVM & Couverture
 #      - name: Parsing des résultats
 #        if: always()
