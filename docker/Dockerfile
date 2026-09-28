@@ -4,7 +4,12 @@ FROM ghdl/ghdl:6.0.0-gcc-ubuntu-24.04
 # System Tools
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-    python3-pip git gcc-riscv64-unknown-elf make procps \
+      python3-pip \
+      git \
+      gcc-riscv64-unknown-elf \
+      make \
+      procps \
+      bsdextrautils \
     && rm -rf /var/lib/apt-get/lists/*
 
 # Python :FuseSoC, Couverture, Linter (VSG)
@@ -17,7 +22,7 @@ RUN pip3 install --no-cache-dir --break-system-packages\
  prettytable
 
 # Update bash environment
-RUN echo RISCV_PREFIX=riscv64-unknown-elf- >> ~/.bashrc
+RUN echo export RISCV_PREFIX=riscv64-unknown-elf- >> ~/.bashrc
 
 
 WORKDIR /workspace
