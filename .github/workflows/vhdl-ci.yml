@@ -3,7 +3,7 @@ name: Shared VHDL CI
 on:
   workflow_call:
     inputs:
-      target_name:
+      nonreg_type:
         required: false
         type: string
         default: nonreg
@@ -24,21 +24,20 @@ jobs:
       - name: FuseSoC library
         run: |
           cd "$GITHUB_WORKSPACE"
-          fusesoc library add lib https://github.com/deuskane/asylum-cores
-          fusesoc library add ip  .
+          fusesoc library add https://github.com/deuskane/asylum-cores --global
 
       # Compilation et exécution parallèle via Makefile
       - name: Setup
         run: |
-          make "${{ inputs.target_name }}" STEP=setup | tee setup.log
+          make nonreg_${{ inputs.nonreg_type }}_setup | tee setup.log
 
       - name: Build
         run: |
-          make -j"$(nproc)" "${{ inputs.target_name }}" STEP=build | tee build.log
+          make -j"$(nproc)" nonreg_${{ inputs.nonreg_type }}_build | tee build.log
 
       - name: Run
         run: |
-          make -j"$(nproc)" "${{ inputs.target_name }}" STEP=run | tee run.log
+          make -j"$(nproc)" nonreg_${{ inputs.nonreg_type }}_un | tee run.log
 
       - name: Upload logs
         if: always()
