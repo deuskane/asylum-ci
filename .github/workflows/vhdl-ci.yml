@@ -28,16 +28,22 @@ jobs:
 
       # Compilation et exécution parallèle via Makefile
       - name: Setup
+        shell: bash
         run: |
-          make nonreg_${{ inputs.nonreg_type }}_setup | tee setup.log
+          set -o pipefail
+          make nonreg_${{ inputs.nonreg_type }}_setup 2>&1 | tee setup.log
 
       - name: Build
+        shell: bash
         run: |
-          make -j"$(nproc)" nonreg_${{ inputs.nonreg_type }}_build | tee build.log
+          set -o pipefail
+          make -j"$(nproc)" nonreg_${{ inputs.nonreg_type }}_build 2>&1 | tee build.log
 
       - name: Run
+        shell: bash
         run: |
-          make -j"$(nproc)" nonreg_${{ inputs.nonreg_type }}_un | tee run.log
+          set -o pipefail
+          make -j"$(nproc)" nonreg_${{ inputs.nonreg_type }}_run 2>&1 | tee run.log
 
       - name: Upload logs
         if: always()
