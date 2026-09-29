@@ -8,6 +8,11 @@ on:
         type: string
         default: sim
 
+      targets_filter:
+        required: false
+        type: string
+        default: .
+
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
@@ -31,19 +36,19 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          make nonreg_${{ inputs.nonreg_type }}_setup 2>&1 | tee setup.log
+          make TARGETS_FILTER=${{ input.targets_filter }} nonreg_${{ inputs.nonreg_type }}_setup              2>&1 | tee setup.log
 
       - name: Build
         shell: bash
         run: |
           set -o pipefail
-          make -j"$(nproc)" nonreg_${{ inputs.nonreg_type }}_build 2>&1 | tee build.log
+          make TARGETS_FILTER=${{ input.targets_filter }} nonreg_${{ inputs.nonreg_type }}_build -j"$(nproc)" 2>&1 | tee build.log
 
       - name: Run
         shell: bash
         run: |
           set -o pipefail
-          make -j"$(nproc)" nonreg_${{ inputs.nonreg_type }}_run 2>&1 | tee run.log
+          make TARGETS_FILTER=${{ input.targets_filter }} nonreg_${{ inputs.nonreg_type }}_run   -j"$(nproc)" 2>&1 | tee run.log
 
       - name: Upload logs
         if: always()
