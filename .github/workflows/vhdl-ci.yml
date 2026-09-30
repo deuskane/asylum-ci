@@ -51,7 +51,6 @@ jobs:
           name: ci-logs
           path: |
             setup.log
-#           build.log
             run.log
 
 #      # Extraction des métriques UVVM & Couverture
