@@ -9,14 +9,11 @@ RUN apt-get update && \
       gcc-riscv64-unknown-elf \
       make \
       procps \
-      bsdextrautils \
-    && rm -rf /var/lib/apt-get/lists/*
+      bsdextrautils
 
-# Python :FuseSoC, Couverture, Linter (VSG)
+# Python :FuseSoC
 RUN pip3 install --no-cache-dir --break-system-packages\
  fusesoc \
- gcovr \
- vsg \
  hjson \
  jsonschema \
  prettytable
@@ -24,5 +21,29 @@ RUN pip3 install --no-cache-dir --break-system-packages\
 # Update bash environment
 RUN echo export RISCV_PREFIX=riscv64-unknown-elf- >> ~/.bashrc
 
+# Get tools for Compilation of toolchain for Picoblaze
+RUN apt-get install -y --no-install-recommends \
+      g++ \
+      bison \
+      flex \
+      libboost-dev
+
+# Clone and build the toolchain for Picoblaze
+RUN git clone https://github.com/deuskane/asylum-utils-generators.git ~/asylum-utils-generators
+
+# Build the toolchain for Picoblaze
+RUN cd ~/asylum-utils-generators && \
+    ./scripts/build_toolchain.sh -s -p -i /opt/ && \
+    echo export PBCC_HOME=/opt >> ~/.bashrc && \
+    echo export PICOASM_HOME=/opt >> ~/.bashrc
+
+# Clean
+RUN rm -rf ~/asylum-utils-generators && \
+    apt-get purge -y --auto-remove \
+      g++ \
+      bison \
+      flex \
+      libboost-dev && \
+    apt-get clean && rm -rf /var/lib/apt-get/lists/*
 
 WORKDIR /workspace
