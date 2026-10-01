@@ -36,13 +36,13 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          make TARGETS_FILTER=${{ inputs.targets_filter }} nonreg NONREG=${{ inputs.nonreg_type }} STEP="setup build"      2>&1 | tee setup.log
+          make TARGETS_FILTER=${{ inputs.targets_filter }} nonreg NONREG=${{ inputs.nonreg_type }} STEP="setup build"
 
       - name: Run
         shell: bash
         run: |
           set -o pipefail
-          make TARGETS_FILTER=${{ inputs.targets_filter }} nonreg NONREG=${{ inputs.nonreg_type }} STEP="run" -j"$(nproc)" 2>&1 | tee run.log
+          make TARGETS_FILTER=${{ inputs.targets_filter }} nonreg NONREG=${{ inputs.nonreg_type }} STEP="run" -j"$(nproc)" 2>&1
 
       - name: Upload logs
         if: always()
@@ -50,8 +50,7 @@ jobs:
         with:
           name: ci-logs
           path: |
-            setup.log
-            run.log
+            log
 
 #      # Extraction des métriques UVVM & Couverture
 #      - name: Parsing des résultats
