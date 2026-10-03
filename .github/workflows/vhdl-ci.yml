@@ -25,11 +25,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Enregistrement de la librairie locale pour FuseSoC
       - name: FuseSoC library
         run: |
           cd "$GITHUB_WORKSPACE"
-          fusesoc library add https://github.com/deuskane/asylum-cores --global
+          fusesoc library update
 
       # Compilation et exécution parallèle via Makefile
       - name: Setup
