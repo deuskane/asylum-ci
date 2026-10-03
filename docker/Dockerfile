@@ -24,8 +24,6 @@ RUN pip3 install --no-cache-dir --break-system-packages\
       jsonschema \
       prettytable
 
-RUN fusesoc library add https://github.com/deuskane/asylum-cores --global
-
 # Setup Environment
 ENV RISCV_PREFIX=riscv64-unknown-elf-
 
