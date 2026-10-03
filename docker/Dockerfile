@@ -5,8 +5,11 @@ FROM ghdl/ghdl:6.0.0-gcc-ubuntu-24.04
 # Run fusesoc and gcc tools for RISC-V
 #======================================================
 # System Tools
-RUN apt-get update
-RUN apt-get install -y --no-install-recommends \
+RUN apt update
+RUN apt install -y software-properties-common
+RUN add-apt-repository ppa:ubuntu-toolchain-r/test -y
+RUN apt update
+RUN apt install -y --no-install-recommends \
       python3-pip \
       git \
       gcc-riscv64-unknown-elf \
@@ -21,6 +24,8 @@ RUN pip3 install --no-cache-dir --break-system-packages\
       jsonschema \
       prettytable
 
+RUN fusesoc library add https://github.com/deuskane/asylum-cores --global
+
 # Setup Environment
 ENV RISCV_PREFIX=riscv64-unknown-elf-
 
@@ -28,7 +33,8 @@ ENV RISCV_PREFIX=riscv64-unknown-elf-
 # Install toolschain for PicoBlaze
 #======================================================
 # Get tools for Compilation of toolchain for Picoblaze
-RUN apt-get install -y --no-install-recommends \
+RUN apt install -y --no-install-recommends \
+      gcc-9 \
       g++ \
       bison \
       flex \
@@ -39,7 +45,11 @@ RUN git clone https://github.com/deuskane/asylum-utils-generators.git ~/asylum-u
 
 # Build the toolchain for Picoblaze
 RUN cd ~/asylum-utils-generators && \
-    ./scripts/build_toolchain.sh -s -p -i /opt/
+    export CC=gcc-9; \
+    ./scripts/build_toolchain.sh -s -i /opt/
+
+RUN cd ~/asylum-utils-generators && \
+    ./scripts/build_toolchain.sh -p -i /opt/
 
 ENV PBCC_HOME=/opt
 ENV PICOASM_HOME=/opt
@@ -48,6 +58,7 @@ ENV PICOASM_HOME=/opt
 RUN rm -rf ~/asylum-utils-generators && \
     apt-get purge -y --auto-remove \
       g++ \
+      gcc-9 \
       bison \
       flex \
       libboost-dev && \

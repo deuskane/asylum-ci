@@ -5,7 +5,7 @@ DOCKERFILE        := Dockerfile
 BUILD_CONTEXT     := .
 DOCKER_MOUNT_PATH ?= $(PWD)
 
-.PHONY: help build run shell stop clean
+.PHONY: help build run shell stop clean purge
 
 help:
 	@echo "Asylum CI Docker helpers"
@@ -16,6 +16,7 @@ help:
 	@echo "  shell   Open a shell inside the running container."
 	@echo "  stop    Stop the container if it is running."
 	@echo "  clean   Remove the local Docker image."
+	@echo "  purge   Remove Docker build cache and unused Docker data."
 	@echo ""
 	@echo "Example:"
 	@echo "  make build"
@@ -45,3 +46,8 @@ stop:
 
 clean:
 	docker rmi $(IMAGE_NAME):$(TAG) || true
+
+purge:
+	@echo "Purging Docker build cache and unused data..."
+	docker builder prune -af
+	docker system prune -af --volumes
