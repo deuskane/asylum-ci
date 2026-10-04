@@ -3,15 +3,14 @@ name: Shared VHDL CI
 on:
   workflow_call:
     inputs:
-      nonreg_type:
-        required: false
+      name:
+        required: true
         type: string
-        default: sim
 
-      targets_filter:
+      step:
         required: false
         type: string
-        default: .
+        default: "setup build run"
 
 jobs:
   build-and-test:
@@ -31,18 +30,11 @@ jobs:
           cd "$GITHUB_WORKSPACE"
           fusesoc library add https://github.com/deuskane/asylum-cores --global
 
-      # Compilation et exécution parallèle via Makefile
-      - name: Setup
+      - name: Execute
         shell: bash
         run: |
           set -o pipefail
-          make TARGETS_FILTER=${{ inputs.targets_filter }} nonreg NONREG=${{ inputs.nonreg_type }} STEP="setup build"
-
-      - name: Run
-        shell: bash
-        run: |
-          set -o pipefail
-          make TARGETS_FILTER=${{ inputs.targets_filter }} nonreg NONREG=${{ inputs.nonreg_type }} STEP="run" -j"$(nproc)" 2>&1
+          make ${{ inputs.name }} STEP=${{ inputs.step }}
 
       - name: Upload logs
         if: always()
