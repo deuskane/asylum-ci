@@ -34,7 +34,7 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          make ${{ inputs.name }} STEP=${{ inputs.step }}
+          make ${{ inputs.name }} STEP="${{ inputs.step }}"
 
       - name: Upload logs
         if: always()
