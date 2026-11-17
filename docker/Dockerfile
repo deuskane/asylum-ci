@@ -28,6 +28,14 @@ RUN pip3 install --no-cache-dir --break-system-packages\
 ENV RISCV_PREFIX=riscv64-unknown-elf-
 
 #======================================================
+# Debug tools : OpenOCD and GDB
+# (OpenOCD + GDB co-simulation of the WardRV debug unit)
+#======================================================
+RUN apt install -y --no-install-recommends \
+      openocd \
+      gdb-multiarch
+
+#======================================================
 # Install toolschain for PicoBlaze
 #======================================================
 # Get tools for Compilation of toolchain for Picoblaze
