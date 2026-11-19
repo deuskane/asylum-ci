@@ -48,7 +48,7 @@ jobs:
                   continue
               passed  = jobs.count("success")
               failed  = len(jobs) - passed
-              message = f"{passed} passed" if failed == 0 else f"{passed} passed, {failed} failed"
+              message = f"{passed} passed / {len(jobs)}" if failed == 0 else f"{passed} passed, {failed} failed / {len(jobs)}"
               badge   = {"schemaVersion": 1,
                          "label"        : kind,
                          "message"      : message,
