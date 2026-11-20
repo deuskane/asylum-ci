@@ -4,6 +4,8 @@ ARG GHDL_IMAGE=ghdl/ghdl:6.0.0-gcc-ubuntu-24.04
 ARG YOSYS_VERSION=0.33-5build2
 # ghdl-yosys-plugin : commit of the tag ghdl-v6.0.0
 ARG GHDL_YOSYS_PLUGIN_COMMIT=07a30ed39fb6a078f1bf7e9e88ce9ed712380ec2
+# asylum-utils-generators : sources of the PicoBlaze toolchain
+ARG ASYLUM_UTILS_GENERATORS_COMMIT=bc32be8eaf50163bc04bfc48cd1604c9f30e7fc8
 
 #======================================================
 # Build stage : GHDL plugin for Yosys (ghdl.so)
@@ -26,6 +28,33 @@ RUN git clone https://github.com/ghdl/ghdl-yosys-plugin.git /ghdl-yosys-plugin &
     cd /ghdl-yosys-plugin && \
     git checkout ${GHDL_YOSYS_PLUGIN_COMMIT} && \
     make GHDL=ghdl
+
+#======================================================
+# Build stage : toolchain for PicoBlaze (SDCC and picoasm)
+# (only the install directory /opt/bin, /opt/share is copied in the image)
+#======================================================
+FROM ${GHDL_IMAGE} AS picoblaze-toolchain
+ARG ASYLUM_UTILS_GENERATORS_COMMIT
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+      ca-certificates \
+      git \
+      make \
+      gcc-9 \
+      g++ \
+      bison \
+      flex \
+      libboost-dev
+
+RUN git clone https://github.com/deuskane/asylum-utils-generators.git /asylum-utils-generators && \
+    cd /asylum-utils-generators && \
+    git checkout ${ASYLUM_UTILS_GENERATORS_COMMIT}
+
+# SDCC is built with gcc-9 (old sources)
+RUN cd /asylum-utils-generators && \
+    CC=gcc-9 ./scripts/build_toolchain.sh -s -i /opt && \
+    ./scripts/build_toolchain.sh -p -i /opt
 
 #======================================================
 # Start distrib
@@ -82,38 +111,12 @@ COPY --from=ghdl-yosys-plugin /ghdl-yosys-plugin/ghdl.so /usr/lib/yosys/plugins/
 ENV GHDL_PREFIX=/opt/ghdl/lib/ghdl
 
 #======================================================
-# Install toolschain for PicoBlaze
+# Toolchain for PicoBlaze (build stage picoblaze-toolchain)
 #======================================================
-# Get tools for Compilation of toolchain for Picoblaze
-RUN apt install -y --no-install-recommends \
-      gcc-9 \
-      g++ \
-      bison \
-      flex \
-      libboost-dev
-
-# Clone and build the toolchain for Picoblaze
-RUN git clone https://github.com/deuskane/asylum-utils-generators.git ~/asylum-utils-generators
-
-# Build the toolchain for Picoblaze
-RUN cd ~/asylum-utils-generators && \
-    export CC=gcc-9; \
-    ./scripts/build_toolchain.sh -s -i /opt/
-
-RUN cd ~/asylum-utils-generators && \
-    ./scripts/build_toolchain.sh -p -i /opt/
+COPY --from=picoblaze-toolchain /opt/bin   /opt/bin
+COPY --from=picoblaze-toolchain /opt/share /opt/share
 
 ENV PBCC_HOME=/opt
 ENV PICOASM_HOME=/opt
-
-# Clean
-RUN rm -rf ~/asylum-utils-generators && \
-    apt-get purge -y --auto-remove \
-      g++ \
-      gcc-9 \
-      bison \
-      flex \
-      libboost-dev && \
-    apt-get clean && rm -rf /var/lib/apt-get/lists/*
 
 WORKDIR /workspace
