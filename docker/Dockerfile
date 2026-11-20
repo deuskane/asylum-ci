@@ -66,20 +66,21 @@ ARG YOSYS_VERSION
 # Run fusesoc and gcc tools for RISC-V
 #======================================================
 # System Tools
-RUN apt update
-RUN apt install -y software-properties-common
-RUN add-apt-repository ppa:ubuntu-toolchain-r/test -y
-RUN apt update
-RUN apt install -y --no-install-recommends \
+# (ca-certificates : https for git and fusesoc library add)
+# (apt lists removed in the same RUN : not kept in the layer)
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+      ca-certificates \
       python3-pip \
       git \
       gcc-riscv64-unknown-elf \
       make \
       procps \
-      bsdextrautils
+      bsdextrautils && \
+    rm -rf /var/lib/apt/lists/*
 
 # Python :FuseSoC
-RUN pip3 install --no-cache-dir --break-system-packages\
+RUN pip3 install --no-cache-dir --break-system-packages \
       fusesoc \
       hjson \
       jsonschema \
@@ -92,16 +93,20 @@ ENV RISCV_PREFIX=riscv64-unknown-elf-
 # Debug tools : OpenOCD and GDB
 # (OpenOCD + GDB co-simulation of the WardRV debug unit)
 #======================================================
-RUN apt install -y --no-install-recommends \
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
       openocd \
-      gdb-multiarch
+      gdb-multiarch && \
+    rm -rf /var/lib/apt/lists/*
 
 #======================================================
 # Synthesis : Yosys and its GHDL plugin
 # (resource counts of the IPs from the VHDL)
 #======================================================
-RUN apt install -y --no-install-recommends \
-      yosys=${YOSYS_VERSION}
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+      yosys=${YOSYS_VERSION} && \
+    rm -rf /var/lib/apt/lists/*
 
 # yosys -m ghdl loads /usr/lib/yosys/plugins/ghdl.so (Ubuntu yosys)
 COPY --from=ghdl-yosys-plugin /ghdl-yosys-plugin/ghdl.so /usr/lib/yosys/plugins/ghdl.so
