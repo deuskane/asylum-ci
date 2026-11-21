@@ -82,12 +82,34 @@ RUN apt-get update && \
       bsdextrautils && \
     rm -rf /var/lib/apt/lists/*
 
-# Python :FuseSoC
+# Python : FuseSoC (and its edalize), regtool (hjson, jsonschema, prettytable)
+# Every version is pinned, the dependencies too (pip freeze of the image of
+# 2026-11-21) : a rebuild installs the same set
 RUN pip3 install --no-cache-dir --break-system-packages \
-      fusesoc \
-      hjson \
-      jsonschema \
-      prettytable
+      fusesoc==2.4.7 \
+      edalize==0.6.8 \
+      hjson==3.1.0 \
+      jsonschema==4.26.0 \
+      prettytable==3.19.0 \
+      annotated-types==0.8.0 \
+      argcomplete==3.7.2 \
+      attrs==26.1.0 \
+      fastjsonschema==2.22.3 \
+      Jinja2==3.1.6 \
+      jsonschema-specifications==2025.9.1 \
+      MarkupSafe==3.0.4 \
+      okonomiyaki==3.0.0 \
+      pydantic==2.14.4 \
+      pydantic_core==2.50.5 \
+      pyparsing==3.3.3 \
+      PyYAML==6.0.3 \
+      referencing==0.37.0 \
+      rpds-py==2026.9.1 \
+      simplesat==0.9.2 \
+      six==1.17.0 \
+      typing_extensions==4.16.0 \
+      typing-inspection==0.4.5 \
+      wcwidth==0.9.4
 
 # Setup Environment
 ENV RISCV_PREFIX=riscv64-unknown-elf-

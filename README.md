@@ -24,7 +24,7 @@ The image is built from [docker/Dockerfile](docker/Dockerfile) by [build-docker.
 | Tool | Version | Used by |
 |---|---|---|
 | GHDL (gcc backend) | 6.0.0, base image `ghdl/ghdl:6.0.0-gcc-ubuntu-24.04` | `sim_*`, `lint_*` |
-| FuseSoC, hjson, jsonschema, prettytable | pip, at image build time | every target, regtool generator |
+| FuseSoC, edalize, hjson, jsonschema, prettytable | 2.4.7, 0.6.8, 3.1.0, 4.26.0, 3.19.0 (pip, dependencies pinned too) | every target, regtool generator |
 | Yosys | 0.33 (Ubuntu 24.04 package `0.33-5build2`) | `syn_*` |
 | ghdl-yosys-plugin | commit of tag `ghdl-v6.0.0`, built against the same libghdl | `syn_*` (VHDL front end) |
 | sky130_fd_sc_hd liberty | typical corner `tt_025C_1v80`, pinned commit and sha256, `$ASIC_LIBERTY` | `syn_*` (ASIC area) |
