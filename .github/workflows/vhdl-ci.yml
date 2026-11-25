@@ -40,9 +40,11 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ci-logs
+          name: ci-logs-${{ inputs.name }}
           path: |
             log
+            build/**/openocd.log
+            build/**/gdb.log
 
 #      # Extraction des métriques UVVM & Couverture
 #      - name: Parsing des résultats
