@@ -68,7 +68,7 @@ jobs:
 | `name` | (required) | Target, run as `make <name>` |
 | `step` | `setup build run` | FuseSoC steps, passed as `STEP` |
 
-The job registers the [asylum-cores](https://github.com/deuskane/asylum-cores) FuseSoC library, so the IP finds its dependencies at the imported versions. It also uploads the `log/` directory as an artifact, even when the target fails.
+The job registers the [asylum-cores](https://github.com/deuskane/asylum-cores) FuseSoC library, so the IP finds its dependencies at the imported versions. It also uploads, even when the target fails, an artifact `ci-logs-<target>` with the `log/` directory and the OpenOCD and GDB logs of the co-simulations (`openocd.log`, `gdb.log` of the work root, written by the co-simulation kit `asylum:verification:openocd`: a failed testbench check skips its post-run hook, which prints them).
 
 ## Badges
 
